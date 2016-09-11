@@ -1,25 +1,24 @@
 .data
 
-x:	.word -2048
-y:	.word 64
+w_n:	.word -64
+w_p:	.word 64
 
 .text
-	la $s0, x
-	la $s1, y
+	la $s0, w_n
+	la $s1, w_p
 	
-	# Multiplos de 4
-	lh $t1, 2($s0)
-	lhu $t2, 0($s0)
+	lw $t0, 0($s0)
+	lw $t1, 0($s1)
 	
-	lb $t3, 0($s1)
-	lbu $t4, 0($s1)
+	lh $t2, 0($s0)
+	lhu $t3, 0($s0)
+	lh $t4, 0($s1)
+	lhu $t5, 0($s1)
 	
-	# Multiplos de 2
-	#sb $s0, 8($t5)
-	#sh $t2, 0($t4)
-
-	# Sem restricao
-	#lb $t1, 4($t1)
+	lb $t6, 0($s0)
+	lbu $t7, 0($s0)
+	lb $t8, 0($s1)
+	lbu $t9, 0($s1)
 	
 	# Termino do programa
 	addi $v0, $zero, 10 # Codigo para terminar o programa = 10

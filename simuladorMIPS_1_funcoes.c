@@ -31,7 +31,7 @@ void loadText(FILE * ponteiroArquivo){
 int32_t lw(uint32_t endereco, int16_t deslocamento){
 
     if(endereco % 4 != 0 || deslocamento % 4 != 0){
-        printf("lw: Endereco ou Deslocamento invalido (Não é multíplo de 4), erro:\n");
+        printf("lw: Endereco (Não é multíplo de 4) ou Deslocamento (Não é multíplo de 4), erro:\n");
         return -2;
     }
 
@@ -45,8 +45,8 @@ int32_t lh(uint32_t endereco, int16_t deslocamento){
     int32_t novoEndereco;
     int32_t bitMaisSiginificativo[1];
 
-    if(endereco % 2 != 0 || deslocamento % 2 != 0){
-        printf("lh: Endereco ou Deslocamento invalido (Não é multíplo de 2), erro:\n");
+    if(endereco % 4 != 0 || deslocamento % 2 != 0){
+        printf("lh: Endereco (Não é multíplo de 4) ou Deslocamento (Não é multíplo de 2), erro:\n");
         return -2;
     }
 
@@ -156,8 +156,8 @@ int32_t lhu(uint32_t endereco, int16_t deslocamento){
     int16_t palavras, resto;
     int32_t novoEndereco;
 
-    if(endereco % 2 != 0 || deslocamento % 2 != 0){
-        printf("lh: Endereco ou Deslocamento invalido (Não é multíplo de 2), erro:\n");
+    if(endereco % 4 != 0 || deslocamento % 2 != 0){
+        printf("lh: Endereco (Não é multíplo de 4) ou Deslocamento (Não é multíplo de 2), erro:\n");
         return -2;
     }
 
@@ -228,7 +228,7 @@ int32_t lbu(uint32_t endereco, int16_t deslocamento){
 void sw(uint32_t endereco, int16_t deslocamento, int32_t dado){
 
     if(endereco % 4 != 0 || deslocamento % 4 != 0){
-        printf("sw: Endereco ou Deslocamento invalido (Não é multíplo de 4)\n");
+        printf("sw: Endereco (Não é multíplo de 4) ou Deslocamento (Não é multíplo de 4)\n");
         return;
     }
 
@@ -244,8 +244,8 @@ void sh(uint32_t endereco, int16_t deslocamento, int16_t dado){
     int16_t palavras, resto;
     int32_t novoEndereco;
 
-    if(endereco % 2 != 0 || deslocamento % 2 != 0){
-        printf("sh: Endereco ou Deslocamento invalido (Não é multíplo de 2)\n");
+    if(endereco % 4 != 0 || deslocamento % 2 != 0){
+        printf("sh: Endereco (Não é multíplo de 4) ou Deslocamento (Não é multíplo de 2)\n");
         return;
     }
 
