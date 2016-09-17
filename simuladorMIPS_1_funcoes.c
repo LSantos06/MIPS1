@@ -42,8 +42,9 @@ int32_t lw(uint32_t endereco, int16_t deslocamento){
 /* Lê meia palavra, 16 bits - retorna inteiro com sinal */
 int32_t lh(uint32_t endereco, int16_t deslocamento){
     int16_t palavras, resto;
-    int32_t novoEndereco;
+    int32_t novoEndereco, anterior;
     int32_t bitMaisSiginificativo[1];
+    int32_t bitMaisSiginificativoAnterior;
 
     if(endereco % 4 != 0 || deslocamento % 2 != 0){
         printf("lh: Endereco (Não é multíplo de 4) ou Deslocamento (Não é multíplo de 2), erro:\n");
@@ -66,6 +67,12 @@ int32_t lh(uint32_t endereco, int16_t deslocamento){
     bitMaisSiginificativo[0] = mem[novoEndereco] & 0x0000f000;
     bitMaisSiginificativo[1] = mem[novoEndereco] & 0xf0000000;
 
+    /* Obtendo o endereco anterior para deslocamentos negativos */
+    anterior = novoEndereco - 1;
+
+    /* Obtendo o bit mais significativo do anterior */
+    bitMaisSiginificativoAnterior = mem[anterior] & 0xf0000000;
+
     /* Se o numero de bytes deslocados dentro do endereco for 0 */
     if(resto == 0){
         /* Se a meia palavra negativa */
@@ -85,13 +92,24 @@ int32_t lh(uint32_t endereco, int16_t deslocamento){
         /* Se a meia palavra for positiva */
         return ((mem[novoEndereco] >> 16) & 0x0000ffff);
     }
+
+    /* Se o numero de bytes deslocados dentro do endereco for- 2 */
+    if(resto == -2){
+        /* Se a meia palavra negativa */
+        if(bitMaisSiginificativoAnterior >= 0x80000000){
+            return ((mem[anterior]  >> 16) | 0xffff0000);
+        }
+        /* Se a meia palavra for positiva */
+        return ((mem[anterior]  >> 16) & 0x0000ffff);
+    }
 }
 
 /* Lê um byte - retorna inteiro com sinal */
 int32_t lb(uint32_t endereco, int16_t deslocamento){
     int16_t palavras, resto;
-    int32_t novoEndereco;
+    int32_t novoEndereco, anterior;
     int32_t bitMaisSiginificativo[3];
+    int32_t bitMaisSiginificativoAnterior[2];
 
     /* Endereco em indices da memoria */
     endereco = endereco / 4;
@@ -110,6 +128,14 @@ int32_t lb(uint32_t endereco, int16_t deslocamento){
     bitMaisSiginificativo[1] = mem[novoEndereco] & 0x0000f000;
     bitMaisSiginificativo[2] = mem[novoEndereco] & 0x00f00000;
     bitMaisSiginificativo[3] = mem[novoEndereco] & 0xf0000000;
+
+    /* Obtendo o endereco anterior para deslocamentos negativos */
+    anterior = novoEndereco - 1;
+
+    /* Obtendo o bit mais significativo do anterior */
+    bitMaisSiginificativoAnterior[0] = mem[anterior] & 0xf0000000;
+    bitMaisSiginificativoAnterior[1] = mem[anterior] & 0x00f00000;
+    bitMaisSiginificativoAnterior[2] = mem[anterior] & 0x0000f000;
 
     /* Se o numero de bytes deslocados dentro do endereco for 0 */
     if(resto == 0){
@@ -131,6 +157,16 @@ int32_t lb(uint32_t endereco, int16_t deslocamento){
         return ((mem[novoEndereco] >> 8) & 0x000000ff);
     }
 
+    /* Se o numero de bytes deslocados dentro do endereco for -1 */
+    if(resto == -1){
+        /* Se o byte for negativo */
+        if(bitMaisSiginificativoAnterior[0] >= 0x80000000){
+            return ((mem[anterior] >> 24) | 0xffffff00);
+        }
+        /* Se o byte for positivo */
+        return ((mem[anterior] >> 24) & 0x000000ff);
+    }
+
     /* Se o numero de bytes deslocados dentro do endereco for 2 */
     if(resto == 2){
         /* Se o byte for negativo */
@@ -141,6 +177,16 @@ int32_t lb(uint32_t endereco, int16_t deslocamento){
         return ((mem[novoEndereco] >> 16) & 0x000000ff);
     }
 
+    /* Se o numero de bytes deslocados dentro do endereco for -2 */
+    if(resto == -2){
+        /* Se o byte for negativo */
+        if(bitMaisSiginificativoAnterior[1] >= 0x00800000){
+            return ((mem[anterior] >> 16) | 0xffffff00);
+        }
+        /* Se o byte for positivo */
+        return ((mem[anterior] >> 16) & 0x000000ff);
+    }
+
     /* Se o numero de bytes deslocados dentro do endereco for 3 */
     if(resto == 3){
         /* Se o byte for negativo */
@@ -148,6 +194,15 @@ int32_t lb(uint32_t endereco, int16_t deslocamento){
             return ((mem[novoEndereco] >> 24) | 0xffffff00);
         }
         return ((mem[novoEndereco] >> 24) & 0x000000ff);
+    }
+
+    /* Se o numero de bytes deslocados dentro do endereco for -3 */
+    if(resto == -3){
+        /* Se o byte for negativo */
+        if(bitMaisSiginificativoAnterior[2] >= 0x00008000){
+            return ((mem[anterior] >> 8) | 0xffffff00);
+        }
+        return ((mem[anterior] >> 8) & 0x000000ff);
     }
 }
 
@@ -182,6 +237,11 @@ int32_t lhu(uint32_t endereco, int16_t deslocamento){
     if(resto == 2){
         return ((mem[novoEndereco] >> 16) & 0x0000ffff);
     }
+
+    /* Se o numero de bytes deslocados dentro do endereco for -2 */
+    if(resto == -2){
+        return ((mem[novoEndereco-1] >> 16) & 0x0000ffff);
+    }
 }
 
 /* Lê um byte - retorna inteiro sem sinal */
@@ -211,14 +271,29 @@ int32_t lbu(uint32_t endereco, int16_t deslocamento){
         return ((mem[novoEndereco] >> 8) & 0x000000ff);
     }
 
+    /* Se o numero de bytes deslocados dentro do endereco for -1 */
+    if(resto == -1){
+        return ((mem[novoEndereco-1] >> 24) & 0x000000ff);
+    }
+
     /* Se o numero de bytes deslocados dentro do endereco for 2 */
     if(resto == 2){
         return ((mem[novoEndereco] >> 16) & 0x000000ff);
     }
 
+    /* Se o numero de bytes deslocados dentro do endereco for 2 */
+    if(resto == -2){
+        return ((mem[novoEndereco-1] >> 16) & 0x000000ff);
+    }
+
     /* Se o numero de bytes deslocados dentro do endereco for 3 */
     if(resto == 3){
         return ((mem[novoEndereco] >> 24) & 0x000000ff);
+    }
+
+    /* Se o numero de bytes deslocados dentro do endereco for 3 */
+    if(resto == -3){
+        return ((mem[novoEndereco-1] >> 8) & 0x000000ff);
     }
 }
 /******************************************************************************/
@@ -236,13 +311,13 @@ void sw(uint32_t endereco, int16_t deslocamento, int32_t dado){
     endereco = endereco / 4;
 
     /* Armazena o valor do dado no endereco */
-    mem[(endereco + deslocamento)/4] = dado;
+    mem[endereco + (deslocamento/4)] = dado;
 }
 
 /* Escreve meia palavra, 16 bits - endereços múltiplos de 2 */
 void sh(uint32_t endereco, int16_t deslocamento, int16_t dado){
     int16_t palavras, resto;
-    int32_t novoEndereco;
+    int32_t novoEndereco, anterior;
 
     if(endereco % 4 != 0 || deslocamento % 2 != 0){
         printf("sh: Endereco (Não é multíplo de 4) ou Deslocamento (Não é multíplo de 2)\n");
@@ -261,6 +336,9 @@ void sh(uint32_t endereco, int16_t deslocamento, int16_t dado){
     /* Numero de bytes que vao ser deslocados dentro do endereco */
     resto = deslocamento % 4;
 
+    /* Obtendo o endereco anterior para deslocamentos negativos */
+    anterior = novoEndereco - 1;
+
     /* Se o numero de bytes deslocados dentro do endereco for 0 */
     if(resto == 0){
         mem[novoEndereco] = (dado & 0x0000ffff) | (mem[novoEndereco] & 0xffff0000);
@@ -271,12 +349,18 @@ void sh(uint32_t endereco, int16_t deslocamento, int16_t dado){
         /* 16 bits = 2 bytes */
         mem[novoEndereco] = ((dado & 0x0000ffff) << 16) | (mem[novoEndereco] & 0x0000ffff);
     }
+
+    /* Se o numero de bytes deslocados dentro do endereco for -2 */
+    if(resto == -2){
+        /* 16 bits = 2 bytes */
+        mem[anterior] = ((dado & 0x0000ffff) << 16) | (mem[anterior] & 0x0000ffff);
+    }
 }
 
 /* Escreve um byte na memória */
 void sb(uint32_t endereco, int16_t deslocamento, int8_t dado){
     int16_t palavras, resto;
-    int32_t novoEndereco;
+    int32_t novoEndereco, anterior;
 
     /* Endereco em indices da memoria */
     endereco = endereco / 4;
@@ -290,6 +374,9 @@ void sb(uint32_t endereco, int16_t deslocamento, int8_t dado){
     /* Numero de bytes que vao ser deslocados dentro do endereco */
     resto = deslocamento % 4;
 
+    /* Obtendo o endereco anterior para deslocamentos negativos */
+    anterior = novoEndereco - 1;
+
     /* Se o numero de bytes deslocados dentro do endereco for 0 */
     if(resto == 0){
         mem[novoEndereco] = (dado & 0x000000ff) | (mem[novoEndereco] & 0xffffff00);
@@ -300,14 +387,29 @@ void sb(uint32_t endereco, int16_t deslocamento, int8_t dado){
         mem[novoEndereco] = ((dado & 0x000000ff) << 8) | (mem[novoEndereco] & 0xffff00ff);
     }
 
+    /* Se o numero de bytes deslocados dentro do endereco for -1 */
+    if(resto == -1){
+        mem[anterior] = ((dado & 0x000000ff) << 24) | (mem[anterior] & 0x00ffffff);
+    }
+
     /* Se o numero de bytes deslocados dentro do endereco for 2 */
     if(resto == 2){
         mem[novoEndereco] = ((dado & 0x000000ff) << 16) | (mem[novoEndereco] & 0xff00ffff);
     }
 
+    /* Se o numero de bytes deslocados dentro do endereco for 2 */
+    if(resto == -2){
+        mem[anterior] = ((dado & 0x000000ff) << 16) | (mem[anterior] & 0xff00ffff);
+    }
+
     /* Se o numero de bytes deslocados dentro do endereco for 3 */
     if(resto == 3){
         mem[novoEndereco] = ((dado & 0x000000ff) << 24) | (mem[novoEndereco] & 0x00ffffff);
+    }
+
+    /* Se o numero de bytes deslocados dentro do endereco for 3 */
+    if(resto == -3){
+        mem[anterior] = ((dado & 0x000000ff) << 8) | (mem[anterior] & 0xffff00ff);
     }
 }
 

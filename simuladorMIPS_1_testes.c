@@ -75,6 +75,7 @@ int main(){
     printf("lw(0,0), Esperado = valor do address [0x00000000]; Resultado = 0x%.8x\n", lw(0,0));
     /* Deslocamento de uma palavra */
     printf("lw(0,4), Esperado = valor do address [0x00000004]; Resultado = 0x%.8x\n", lw(0,4));
+    printf("lw(8,-4), Esperado = valor do address [0x00000004]; Resultado = 0x%.8x\n", lw(8,-4));
     getchar();
 
     /* Load Halfword */
@@ -86,6 +87,9 @@ int main(){
     printf("lh(0,2), Esperado = 2 msbytes do address [0x00000000]; Resultado = 0x%.8x\n", lh(0,2));
     /* Deslocamento de meia-palavra */
     printf("lh(0,4), Esperado = 2 lsbytes do address [0x00000004]; Resultado = 0x%.8x\n", lh(0,4));
+    /* Desclocamentos negativos */
+    printf("lh(60,-2), Esperado = 2 msbytes do address [0x00000038], em complemento de 2; Resultado = 0x%.8x\n", lh(60,-2));
+    printf("lh(60,-4), Esperado = 2 lsbytes do address [0x00000038], em complemento de 2; Resultado = 0x%.8x\n", lh(60,-4));
     /* Conteudos negativos */
     printf("lh(56,0), Esperado = 2 lsbytes do address [0x00000038], em complemento de 2; Resultado = 0x%.8x\n", lh(56,0));
     getchar();
@@ -99,6 +103,9 @@ int main(){
     printf("lhu(0,2), Esperado = 2 msbytes do address [0x00000000]; Resultado = 0x%.8x\n", lhu(0,2));
     /* Deslocamento de meia-palavra */
     printf("lhu(0,4), Esperado = 2 lsbytes do address [0x00000004]; Resultado = 0x%.8x\n", lhu(0,4));
+    /* Desclocamentos negativos */
+    printf("lhu(60,-2), Esperado = 2 msbytes do address [0x00000038]; Resultado = 0x%.8x\n", lhu(60,-2));
+    printf("lhu(60,-4), Esperado = 2 lsbytes do address [0x00000038]; Resultado = 0x%.8x\n", lhu(60,-4));
     /* Conteudos negativos */
     printf("lhu(56,0), Esperado = 2 lsbytes do address [0x00000038]; Resultado = 0x%.8x\n", lhu(56,0));
 
@@ -111,8 +118,13 @@ int main(){
     printf("lb(0,1), Esperado = segundo lsbyte do address [0x00000000]; Resultado = 0x%.8x\n", lb(0,1));
     printf("lb(0,2), Esperado = segundo msbyte do address [0x00000000]; Resultado = 0x%.8x\n", lb(0,2));
     printf("lb(0,3), Esperado = msbyte do address [0x00000000]; Resultado = 0x%.8x\n", lb(0,3));
-    /* Deslocamento de meia-palavra */
+    /* Deslocamento de bytes */
     printf("lb(0,4), Esperado = lsbyte do address [0x00000004]; Resultado = 0x%.8x\n", lb(0,4));
+    /* Desclocamentos negativos */
+    printf("lb(60,-1), Esperado = msbyte do address [0x00000038], em complemento de 2; Resultado = 0x%.8x\n", lb(60,-1));
+    printf("lb(60,-2), Esperado = segundo msbyte do address [0x00000038], em complemento de 2; Resultado = 0x%.8x\n", lb(60,-2));
+    printf("lb(60,-3), Esperado = segundo lsbyte do address [0x00000038], em complemento de 2; Resultado = 0x%.8x\n", lb(60,-3));
+    printf("lb(60,-4), Esperado = lsbyte do address [0x00000038], em complemento de 2; Resultado = 0x%.8x\n", lb(60,-4));
     /* Conteudos negativos */
     printf("lb(56,0), Esperado = 2 lsbytes do address [0x00000038], em complemento de 2; Resultado = 0x%.8x\n", lb(56,0));
     getchar();
@@ -126,6 +138,11 @@ int main(){
     printf("lbu(0,3), Esperado = msbyte do address [0x00000000]; Resultado = 0x%.8x\n", lbu(0,3));
     /* Deslocamento de meia-palavra */
     printf("lbu(0,4), Esperado = lsbyte do address [0x00000004]; Resultado = 0x%.8x\n", lbu(0,4));
+    /* Desclocamentos negativos */
+    printf("lb(60,-1), Esperado = msbyte do address [0x00000038], em complemento de 2; Resultado = 0x%.8x\n", lb(60,-1));
+    printf("lb(60,-2), Esperado = segundo msbyte do address [0x00000038], em complemento de 2; Resultado = 0x%.8x\n", lb(60,-2));
+    printf("lb(60,-3), Esperado = segundo lsbyte do address [0x00000038], em complemento de 2; Resultado = 0x%.8x\n", lb(60,-3));
+    printf("lb(60,-4), Esperado = lsbyte do address [0x00000038], em complemento de 2; Resultado = 0x%.8x\n", lb(60,-4));
     /* Conteudos negativos */
     printf("lbu(56,0), Esperado = lsbyte do address [0x00000038]; Resultado = 0x%.8x\n", lbu(56,0));
     getchar();
@@ -138,6 +155,9 @@ int main(){
     /* Caso base */
     sw(0,0,0);
     printf("sw(0,0,0), Esperado = 0x00000000 no valor do address [0x00000000]; Resultado = 0x%.8x\n", lw(0,0));
+    /* Desclocamentos negativos */
+    sw(60,-4,0);
+    printf("sw(60,-4,0), Esperado = 0x00000000 no valor do address [0x00000038]; Resultado = 0x%.8x\n", lw(60,-4));
     /* Deslocamento de uma palavra */
     sw(0,4,0);
     printf("sw(0,4,0), Esperado = 0x00000000 no valor do address [0x00000004]; Resultado = 0x%.8x\n", lw(0,4));
@@ -153,6 +173,11 @@ int main(){
     printf("sh(0,0,-64), Esperado = 0x0000ffc0 no valor do address [0x00000000]; Resultado = 0x%.8x\n", lw(0,0));
     sh(0,2,-64);
     printf("sh(0,2,-64), Esperado = 0xffc0ffc0 no valor do address [0x00000000]; Resultado = 0x%.8x\n", lw(0,0));
+    /* Desclocamentos negativos */
+    sh(60,-2,-1);
+    printf("sh(60,-4,-1), Esperado = 0xffff0000 no valor do address [0x00000038]; Resultado = 0x%.8x\n", lw(60,-4));
+    sh(60,-4,-1);
+    printf("sh(60,-4,-1), Esperado = 0xffffffff no valor do address [0x00000038]; Resultado = 0x%.8x\n", lw(60,-4));
     /* Deslocamento de uma palavra */
     sh(0,4,-64);
     printf("sh(0,4,-64), Esperado = 0x0000ffc0 no valor do address [0x00000004]; Resultado = 0x%.8x\n", lw(0,4));
@@ -169,6 +194,15 @@ int main(){
     printf("sh(0,2,-16), Esperado = 0xff000000 no valor do address [0x00000000]; Resultado = 0x%.8x\n", lw(0,0));
     sb(0,3,0);
     printf("sh(0,2,-16), Esperado = 0x00000000 no valor do address [0x00000000]; Resultado = 0x%.8x\n", lw(0,0));
+    /* Desclocamentos negativos */
+    sb(60,-1,0);
+    printf("sb(60,-1,0), Esperado = 0x00ffffff no valor do address [0x00000038]; Resultado = 0x%.8x\n", lw(60,-4));
+    sb(60,-2,0);
+    printf("sb(60,-2,0), Esperado = 0x0000ffff no valor do address [0x00000038]; Resultado = 0x%.8x\n", lw(60,-4));
+    sb(60,-3,0);
+    printf("sb(60,-3,0), Esperado = 0x000000ff no valor do address [0x00000038]; Resultado = 0x%.8x\n", lw(60,-4));
+    sb(12,-4,-1);
+    printf("sb(12,-4,-1), Esperado = 0x8d2900ff no valor do address [0x00000008]; Resultado = 0x%.8x\n", lw(12,-4));
     /* Deslocamento de uma palavra */
     sb(0,4,0);
     printf("sh(0,4,-64), Esperado = 0x0000ff00 no valor do address [0x00000004]; Resultado = 0x%.8x\n", lw(0,4));
